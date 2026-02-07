@@ -1,0 +1,44 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+          cache: true
+
+      - name: Build linux amd64/arm64
+        working-directory: alert-spooler
+        env:
+          CGO_ENABLED: "0"
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+
+          VERSION="${GITHUB_REF_NAME}"
+
+          GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o dist/alert-spooler_${VERSION}_linux_amd64 ./cmd/alert-spooler
+          GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o dist/alert-spooler_${VERSION}_linux_arm64 ./cmd/alert-spooler
+
+          (cd dist && sha256sum * > sha256sums.txt)
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            alert-spooler/dist/alert-spooler_*_linux_amd64
+            alert-spooler/dist/alert-spooler_*_linux_arm64
+            alert-spooler/dist/sha256sums.txt
+          generate_release_notes: true

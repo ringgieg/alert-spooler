@@ -1,0 +1,57 @@
+# alert-spooler configuration example
+
+# Monthly rolling DB: creates one SQLite per natural month: <folder>/<prefix><YYYYMM>.db
+database:
+  folder: database/
+  prefix: alerts_
+
+# Loki label: job
+job: mhdbs
+
+# Debug logs
+debug: false
+
+# Delete files only after send+DB succeed
+delete_after_send: true
+
+# Input directories/globs (aligned with alert_notifier's config.yaml).
+# Use 4 entries to make types explicit.
+files:
+  business:
+    alert_dir: C:\\path\\to\\alerts\\business\\*\\*.warn
+    error_dir: C:\\path\\to\\error_alerts\\business
+  dev:
+    alert_dir: C:\\path\\to\\alerts\\dev\\*\\*.alarm
+    error_dir: C:\\path\\to\\error_alerts\\dev
+  iec:
+    alert_dir: C:\\path\\to\\alerts\\iec\\*\\*.warn
+    error_dir: C:\\path\\to\\error_alerts\\iec
+  general:
+    alert_dir: C:\\path\\to\\alerts\\general\\*
+    error_dir: C:\\path\\to\\error_alerts\\general
+
+# Optional: add constant Loki labels (emitted via syslog structured-data).
+# Alloy must be configured to extract these keys.
+fixed_labels:
+  env: prod
+  site: cn
+  cluster: mh
+
+# Alloy syslog receiver
+syslog_addr: 127.0.0.1:1514
+
+# Structured data label
+service: alerts
+
+# Content hash length (hex chars)
+hash_hex_len: 24
+
+# Optional 4-char code tagging.
+# If the log content contains any of these tokens/prefixes, the first match is used as `cccc` label.
+# Tagging is enabled iff `codes` is non-empty.
+cccc:
+  codes:
+    - ZBBB
+    - ZGGG
+    - ZHCC
+    - ZHHH
