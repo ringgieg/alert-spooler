@@ -31,6 +31,8 @@ jobs:
           GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o dist/alert-spooler_${VERSION}_linux_amd64 ./cmd/alert-spooler
           GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o dist/alert-spooler_${VERSION}_linux_arm64 ./cmd/alert-spooler
 
+          cp -f config.example.yaml dist/config.yaml.example
+
           (cd dist && sha256sum * > sha256sums.txt)
 
       - name: Create GitHub Release
@@ -39,5 +41,6 @@ jobs:
           files: |
             dist/alert-spooler_*_linux_amd64
             dist/alert-spooler_*_linux_arm64
+            dist/config.yaml.example
             dist/sha256sums.txt
           generate_release_notes: true
