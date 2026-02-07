@@ -10,6 +10,9 @@ import (
 	"time"
 )
 
+// Set by release builds via: -ldflags "-X main.version=<tag>"
+var version = "dev"
+
 type multiFlag []string
 
 func (m *multiFlag) String() string { return strings.Join(*m, ",") }
