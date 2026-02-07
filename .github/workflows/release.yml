@@ -20,7 +20,6 @@ jobs:
           cache: true
 
       - name: Build linux amd64/arm64
-        working-directory: alert-spooler
         env:
           CGO_ENABLED: "0"
         run: |
@@ -38,7 +37,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            alert-spooler/dist/alert-spooler_*_linux_amd64
-            alert-spooler/dist/alert-spooler_*_linux_arm64
-            alert-spooler/dist/sha256sums.txt
+            dist/alert-spooler_*_linux_amd64
+            dist/alert-spooler_*_linux_arm64
+            dist/sha256sums.txt
           generate_release_notes: true
